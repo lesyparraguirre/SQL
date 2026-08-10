@@ -1,4 +1,5 @@
 Prácticas SQL Server
+
 Repositorio de ejercicios prácticos realizados en SQL Server, enfocados en el manejo y diseño de bases de datos relacionales.
 
 Contenidos:
