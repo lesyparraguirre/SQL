@@ -64,7 +64,7 @@ create table Tarjetas (
     check(FechaEmision < FechaVencimiento)
 );
 go
-
+--------------------------------------------------------------------------------------------------------
 insert into Provincias (Provincia)
 values
 ('Buenos Aires'),
@@ -217,6 +217,38 @@ values
 (14, 1, 5, '4500123412340027', '2024-06-21', '2029-06-30', '852'),
 (16, 4, 7, '5800123412340028', '2023-09-11', '2028-09-30', '456'),
 (18, 2, 6, '5200123412340029', '2024-03-28', '2029-03-31', '654'),
-(20, 1, 2, '4500123412340030', '2024-10-15', '2029-10-31', '357');*/
+(20, 1, 2, '4500123412340030', '2024-10-15', '2029-10-31', '357');
+--------------------------------------------------------------------------------------------------------
+1.	Mostrar todos los usuarios registrados. 
+2.	Mostrar solamente DNI, Apellidos, Nombres y Mail de los usuarios. 
+3.	Mostrar los usuarios ordenados alfabéticamente por apellido. 
+4.	Mostrar los usuarios nacidos después del año 2000. 
+5.	Buscar usuarios cuyo apellido empiece con la letra M. 
+6.	Mostrar las billeteras cuyo saldo sea mayor a $100.000. 
+7.	Mostrar las billeteras ordenadas de mayor a menor según su saldo. 
+8.	Mostrar cuál es el saldo promedio de todas las billeteras. 
+9.	Mostrar cuántas billeteras existen. 
+10.	Mostrar el saldo más alto y el saldo más bajo. 
+11.	Mostrar el nombre completo del usuario junto con el alias de su billetera. 
+12.	Mostrar cada usuario junto con su localidad. 
+13.	Mostrar cada usuario junto con su localidad y provincia. 
+14.	Mostrar cada tarjeta junto con su marca (Visa, Mastercard, etc.). 
+15.	Mostrar cada tarjeta junto con el nombre del banco al que pertenece. 
+16.	Mostrar: usuario + alias de billetera + número de tarjeta + marca + banco. 
+17.	Mostrar cuántas tarjetas tiene cada billetera. 
+18.	Mostrar únicamente las billeteras que tengan más de una tarjeta. 
+19.	Mostrar cuánto dinero tienen en total las billeteras agrupadas por usuario. 
+20.	Mostrar los usuarios junto con su situación crediticia, localidad y provincia.
+*/
+Select * from Usuarios
 
-Select ID, Apellidos, Nombres, FechaNacimiento from Usuarios
+Select DNI, Apellidos, Nombres, Mail from Usuarios
+
+Select * from usuarios
+order by Apellidos asc
+
+Select * from Usuarios
+where YEAR(FechaNacimiento) < 2000
+
+Select * from Usuarios
+where Apellidos LIKE 'M%'
