@@ -218,37 +218,156 @@ values
 (16, 4, 7, '5800123412340028', '2023-09-11', '2028-09-30', '456'),
 (18, 2, 6, '5200123412340029', '2024-03-28', '2029-03-31', '654'),
 (20, 1, 2, '4500123412340030', '2024-10-15', '2029-10-31', '357');
---------------------------------------------------------------------------------------------------------
-1.	Mostrar todos los usuarios registrados. 
-2.	Mostrar solamente DNI, Apellidos, Nombres y Mail de los usuarios. 
-3.	Mostrar los usuarios ordenados alfabéticamente por apellido. 
-4.	Mostrar los usuarios nacidos después del año 2000. 
-5.	Buscar usuarios cuyo apellido empiece con la letra M. 
-6.	Mostrar las billeteras cuyo saldo sea mayor a $100.000. 
-7.	Mostrar las billeteras ordenadas de mayor a menor según su saldo. 
-8.	Mostrar cuál es el saldo promedio de todas las billeteras. 
-9.	Mostrar cuántas billeteras existen. 
-10.	Mostrar el saldo más alto y el saldo más bajo. 
-11.	Mostrar el nombre completo del usuario junto con el alias de su billetera. 
-12.	Mostrar cada usuario junto con su localidad. 
-13.	Mostrar cada usuario junto con su localidad y provincia. 
-14.	Mostrar cada tarjeta junto con su marca (Visa, Mastercard, etc.). 
-15.	Mostrar cada tarjeta junto con el nombre del banco al que pertenece. 
-16.	Mostrar: usuario + alias de billetera + número de tarjeta + marca + banco. 
-17.	Mostrar cuántas tarjetas tiene cada billetera. 
-18.	Mostrar únicamente las billeteras que tengan más de una tarjeta. 
-19.	Mostrar cuánto dinero tienen en total las billeteras agrupadas por usuario. 
-20.	Mostrar los usuarios junto con su situación crediticia, localidad y provincia.
+--------------------------------------------------------------------------------------------------------             
 */
+
+/*1.	Mostrar todos los usuarios registrados.*/
 Select * from Usuarios
 
+/*2.	Mostrar solamente DNI, Apellidos, Nombres y Mail de los usuarios.*/
 Select DNI, Apellidos, Nombres, Mail from Usuarios
 
+/*3.	Mostrar los usuarios ordenados alfabéticamente por apellido.*/
 Select * from usuarios
 order by Apellidos asc
 
+/*4.	Mostrar los usuarios nacidos después del año 2000.*/
 Select * from Usuarios
 where YEAR(FechaNacimiento) < 2000
 
+/*5.	Buscar usuarios cuyo apellido empiece con la letra M. */
 Select * from Usuarios
 where Apellidos LIKE 'M%'
+
+/*6.	Mostrar las billeteras cuyo saldo sea mayor a $100.000. */
+Select * from Billeteras
+where Saldo > 100000
+
+/*7.	Mostrar las billeteras ordenadas de mayor a menor según su saldo.*/
+select * from Billeteras
+order by Saldo desc
+
+/*8.	Mostrar cuál es el saldo promedio de todas las billeteras.*/
+select AVG(Saldo) as Promedio
+from Billeteras
+
+/*9.	Mostrar cuántas billeteras existen.*/
+select COUNT(Id) as Cantidad
+from Billeteras
+
+/*10.	Mostrar el saldo más alto y el saldo más bajo. */
+selecT MAX(Saldo) as MAXIMO, MIN(Saldo) as MINIMO
+from Billeteras
+
+/*11.	Mostrar el nombre completo del usuario junto con el alias de su billetera. */
+Select Nombres, Apellidos, Alias from Usuarios
+INNER JOIN Billeteras
+ON Usuarios.ID = Billeteras.ID_Usuario
+
+/*12.	Mostrar cada usuario junto con su localidad.*/
+Select Nombres, Apellidos, Localidad from Usuarios
+INNER JOIN Localidades
+ON Usuarios.ID_Localidad = Localidades.ID_Localidad
+
+/*13.	Mostrar cada usuario junto con su localidad y provincia.*/
+Select Nombres, Apellidos, Localidad, Provincia from Usuarios
+INNER JOIN Localidades
+ON Usuarios.ID_Localidad = Localidades.ID_Localidad
+INNER JOIN Provincias
+ON Localidades.ID_Provincia = Provincias.ID
+
+/*14.	Mostrar cada tarjeta junto con su marca (Visa, Mastercard, etc.).*/
+Select Numero, Marca from Tarjetas
+INNER JOIN MarcasTarjeta
+ON Tarjetas.ID_MarcaTarjeta = MarcasTarjeta.ID
+
+/*15.	Mostrar cada tarjeta junto con el nombre del banco al que pertenece. */
+Select Numero, Nombre from Tarjetas
+INNER JOIN Bancos
+ON Tarjetas.ID_Banco = Bancos.ID
+
+/**/
+Select Nombres, Apellidos, Alias, Numero from Usuarios
+INNER JOIN Billeteras
+ON Usuarios.ID = Billeteras.ID_Usuario
+INNER JOIN Tarjetas
+ON Billeteras.ID = Tarjetas.ID_Billetera
+
+/*16.	Mostrar: usuario + alias de billetera + número de tarjeta + marca + banco.*/
+Select Nombres, Apellidos, Alias, Numero, Marca, Nombre from Usuarios
+INNER JOIN Billeteras
+ON Usuarios.ID = Billeteras.ID_Usuario
+INNER JOIN Tarjetas
+ON Billeteras.ID = Tarjetas.ID_Billetera
+INNER JOIN MarcasTarjeta
+ON Tarjetas.ID_MarcaTarjeta = MarcasTarjeta.ID
+INNER JOIN Bancos
+ON Tarjetas.ID_Banco = Bancos.ID
+
+/*17.	Mostrar cuántas tarjetas tiene cada billetera.*/
+Select Alias, COUNT (Tarjetas.ID) as CantidadTarjetas
+from Billeteras
+INNER JOIN Tarjetas
+ON Billeteras.ID = Tarjetas.ID_Billetera
+GROUP BY Alias
+
+/**/
+Select Nombre, COUNT(Tarjetas.ID) as CantidadTarjetas
+from Bancos
+INNER JOIN Tarjetas
+ON Bancos.ID = Tarjetas.ID_Banco
+GROUP BY 
+
+/**/
+Select Nombre, COUNT(Tarjetas.ID) as CantidadTarjetas
+from Bancos
+INNER JOIN Tarjetas
+ON Bancos.ID = Tarjetas.ID_Banco
+GROUP BY Nombre
+HAVING COUNT (Tarjetas.ID) > 2
+
+/*Mostrar cada marca de tarjeta y cuántas tarjetas hay de esa marca, 
+pero solamente las marcas que tengan 2 o más tarjetas, ordenadas de 
+mayor a menor cantidad.*/
+
+Select Marca, COUNT(Tarjetas.ID) as CantidadTarjetas
+from MarcasTarjeta
+INNER JOIN Tarjetas
+ON MarcasTarjeta.ID = Tarjetas.ID_MarcaTarjeta
+GROUP BY Marca
+HAVING COUNT (Tarjetas.ID) >= 2
+ORDER BY CantidadTarjetas DESC
+
+/*Mostrar cada provincia y la cantidad de usuarios que viven 
+en ella, ordenando desde la provincia con más usuarios hasta 
+la que tiene menos.*/
+
+Select Provincia, COUNT(Usuarios.ID) as CantidadPersonas
+from Provincias
+INNER JOIN Localidades
+ON Provincias.ID = Localidades.ID_Provincia
+INNER JOIN Usuarios
+ON Usuarios.ID_Localidad = Localidades.ID_Localidad
+GROUP BY Provincia
+ORDER BY CantidadPersonas DESC
+
+/*Mostrar cada localidad y la cantidad de usuarios que viven en 
+ella, pero mostrar solo las localidades que tengan 2 o más 
+usuarios, ordenadas de mayor a menor cantidad.*/
+
+Select Localidad, COUNT(Usuarios.ID) as CantidadPersonas
+from Localidades
+INNER JOIN Usuarios
+ON Localidades.ID_Localidad = Usuarios.ID_Localidad
+GROUP BY Localidad
+HAVING COUNT(Usuarios.ID) >= 2
+ORDER BY CantidadPersonas DESC
+
+/*Mostrar Nombres, Apellidos y Saldo de los usuarios 
+cuya billetera tenga un saldo entre $50.000 y $150.000*/
+
+Select Nombres, Apellidos, Saldo
+from Usuarios
+INNER JOIN Billeteras
+ON Billeteras.ID_Usuario = Usuarios.ID
+WHERE Saldo BETWEEN 50000 AND 150000
