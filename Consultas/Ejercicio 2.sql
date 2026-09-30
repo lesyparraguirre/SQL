@@ -138,7 +138,100 @@ WHERE Ciudad LIKE '%Jujuy%'
 /*Los clientes que no tengan registrado su correo electrónico (indicando
 IdCliente, Apellido y Nombre). Ordenar por Apellido en forma descendente y
 por Nombre en forma ascendente.*/
-
 Select IdCliente, Apellido, Nombre from Clientes
 WHERE CorreoElectronico IS NULL
 ORDER BY Nombre ASC, Apellido DESC
+
+/*El último cliente del listado en orden alfabético (ordenado por Apellido y luego
+por Nombre). Indicar IdCliente, Apellido y Nombre.*/
+Select TOP 1 IdCliente, Apellido, Nombre from Clientes
+ORDER BY Apellido DESC, Nombre DESC
+
+/*Los clientes cuyo año de alta haya sido 2019 (Indicar Nombre, Apellido y
+Fecha de alta).*/
+Select Nombre, Apellido, FechaAlta from Clientes
+WHERE YEAR(FechaAlta) = 2019
+
+/*Todos los clientes indicando Apellido, Nombre y Datos de Contacto. La última
+columna debe contener el mail si el cliente tiene mail, de lo contrario el Celular,
+sino el Teléfono y en caso de no tener ninguno debe indicar 'Incontactable'*/
+Select Apellido, Nombre,
+CASE
+WHEN CorreoElectronico IS NOT NULL THEN CorreoElectronico
+WHEN Celular IS NOT NULL THEN Celular
+WHEN Telefono IS NOT NULL THEN Telefono
+Else 'Incontactable'
+END AS DatosContacto
+from Clientes
+
+/*Todos los clientes, indicando el semestre en el cual se produjo su alta. Indicar
+Nombre, Apellido, Fecha de Alta y la frase “Primer Semestre” o “Segundo
+Semestre” según corresponda.*/
+Select Nombre, Apellido, FechaAlta,
+CASE
+WHEN MONTH(FechaAlta) > 6 THEN 'Segundo Semestre'
+WHEN MONTH(FechaAlta) <= 6 THEN 'Primer Semestre'
+END AS Semestre
+from Clientes
+
+/*Los clientes que tengan registrado teléfono pero no celular. Indicar IdCliente, 
+Apellido y Nombre. Ordenar en forma descendente por fecha de alta*/
+Select IdCliente, Apellido, Nombre from Clientes
+WHERE Telefono IS NOT NULL
+AND Celular IS NULL
+ORDER BY FechaAlta DESC
+
+/*Todas las ciudades donde residen los clientes. NOTA: 
+no se pueden repetir*/
+Select DISTINCT Ciudad from Clientes
+
+/*Todos los pedidos cuyo Estado no sea Rechazado. Indicar IdPedido, IdCliente,
+Fecha y Monto Total. Ordenar los resultados por fecha de pedido (del más
+reciente al más antigüo).*/
+Select IdPedido, IdCliente, FechaPedido, MontoTotal from Pedidos
+WHERE Estado != 'Rechazado'
+ORDER BY FechaPedido DESC
+
+/*Todos los pedidos cuyo Estado sea “Pagado” o “En preparación” y su monto
+esté entre $500 y $1250 (ambos inclusive). Indicar el valor de todas las
+columnas.
+*/
+Select * from Pedidos
+WHERE (Estado = 'Pagado' OR Estado = 'En preparación')
+AND (MontoTotal >=500 AND MontoTotal <= 1250)
+
+/*Listar los meses del año en los que se registraron pedidos en los años 2018 y
+2019. NOTA: no indicar más de una vez el mismo mes.*/
+Select DISTINCT MONTH(FechaPedido) AS Meses201819 
+FROM Pedidos
+WHERE YEAR(FechaPedido) = 2018 OR YEAR(FechaPedido) = 2019
+
+/*Indicar los distintos ID de clientes que realizaron pedidos por un monto total
+mayor a $1000 y cuyo estado no sea Rechazado.
+*/
+Select DISTINCT IdCliente from Pedidos
+WHERE (MontoTotal > 1000) AND (Estado != 'Rechazado')
+
+/*Listar todos los datos de los pedidos realizados por los clientes con ID 1, 8,
+16, 24, 32 y 48. Los registros deben estar ordenados por IdCliente y Estado.*/
+Select * from Pedidos
+WHERE IdCliente = 1 OR IdCliente = 8 OR IdCliente = 16 OR IdCliente = 24 OR IdCliente = 32 OR IdCliente = 48
+ORDER BY IdCliente ASC, Estado ASC
+
+/*Listar todos los datos de los tres pedidos de más bajo monto que se
+encuentren en estado Pagado.
+*/
+
+/**/
+
+/**/
+
+/**/
+
+/**/
+
+/**/
+
+/**/
+
+/**/
