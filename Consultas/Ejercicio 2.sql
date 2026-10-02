@@ -221,8 +221,17 @@ ORDER BY IdCliente ASC, Estado ASC
 /*Listar todos los datos de los tres pedidos de más bajo monto que se
 encuentren en estado Pagado.
 */
+Select TOP 3 * from Pedidos
+WHERE Estado = 'Pagado'
+ORDER BY MontoTotal ASC
 
-/**/
+/*Listar los pedidos que tengan estado Rechazado y un monto total menor a
+$500 o bien tengan estado En preparación y un monto total que supere los
+$1000. Indicar todas las columnas excepto Id de Cliente y Fecha del pedido.
+Ordenar por Id de pedido.*/
+Select IdPedido, Estado, MontoTotal from Pedidos
+WHERE (Estado = 'Rechazado' AND MontoTotal < 500) OR (Estado = 'En preparación' AND MontoTotal > 1000)
+ORDER BY IdPedido ASC
 
 /**/
 
