@@ -233,14 +233,75 @@ Select IdPedido, Estado, MontoTotal from Pedidos
 WHERE (Estado = 'Rechazado' AND MontoTotal < 500) OR (Estado = 'En preparación' AND MontoTotal > 1000)
 ORDER BY IdPedido ASC
 
-/**/
+/*Listar los pedidos realizados en el año 2023 indicando todas las columnas y
+además una llamada “DiaSemana” que devuelva a qué día de la semana (1-7)
+corresponde la fecha del pedido. Ordenar los registros por la columna que
+contiene el día de la semana.
+DESAFÍO: crear otra columna llamada DiaSemanaEnLetras que contenga el
+día de la semana pero en letras (suponiendo que la semana comienza en
+1-DOMINGO). Por ejemplo si la fecha del pedido es 20/07/2023, la columna
+DiaSemana debe contener 5 y la columna DiaSemanaEnLetras debe contener
+JUEVES.
+*/
+Select *, DATEPART(WEEKDAY, FechaPedido) AS DiaSemana,
+CASE
+WHEN DATEPART(WEEKDAY, FechaPedido) = 1 THEN 'DOMINGO'
+WHEN DATEPART(WEEKDAY, FechaPedido) = 2 THEN 'LUNES'
+WHEN DATEPART(WEEKDAY, FechaPedido) = 3 THEN 'MARTES'
+WHEN DATEPART(WEEKDAY, FechaPedido) = 4 THEN 'MIERCOLES'
+WHEN DATEPART(WEEKDAY, FechaPedido) = 5 THEN 'JUEVES'
+WHEN DATEPART(WEEKDAY, FechaPedido) = 6 THEN 'VIERNES'
+WHEN DATEPART(WEEKDAY, FechaPedido) = 7 THEN 'SABADO'
+END AS DiaSemanaEnLetras
+from Pedidos
+WHERE YEAR(FechaPedido) = 2023
+ORDER BY DiaSemana ASC
 
-/**/
+/*Listar los pedidos en estado Pendiente y cuyo mes de realización coincida con
+el mes actual (sin importar el año). NOTA: obtener el mes actual mediante una
+función, no forzar el valor.*/
+Select * from Pedidos
+WHERE Estado = 'Pendiente' AND MONTH(FechaPedido) = MONTH(GETDATE())
 
-/**/
+/*La empresa que distribuye los pedidos desea otorgar una bonificación sobre
+el monto total en aquellos pedidos que estén en estado Pendiente o En
+preparación. Si el pedido fue realizado entre los años 2017 y 2019 la
+bonificación será del 50%. Si el pedido se realizó en los años 2020 o 2021, la
+bonificación será del 30%. Para los pedidos efectuados entre los años 2022 y
+2023, la bonificación es del 10%. Calcular, dependiendo del estado de cada
+pedido y el año en que se realizó, el valor del monto total una vez efectuada la
+bonificación, informándolo en una columna llamada MontoTotalBonificado.
+Listar además todos las columnas de Pedidos, ordenadas por la fecha del
+pedido. No tener en cuenta los pedidos que no estén en los estados
+mencionados.*/
+Select *,
+CASE
+WHEN YEAR(FechaPedido) BETWEEN 2017 AND 2019 THEN MontoTotal * 0.50
+WHEN YEAR(FechaPedido) BETWEEN 2020 AND 2021 THEN MontoTotal * 0.70
+WHEN YEAR(FechaPedido) BETWEEN 2022 AND 2023 THEN MontoTotal * 0.90
+END AS MontoTotalBonificado
+from Pedidos
+WHERE Estado = 'Pendiente' OR Estado = 'En preparación'
+ORDER BY FechaPedido ASC
 
-/**/
+/*Listar los pedidos que no hayan sido realizados por los clientes con ID 2, 9, 17,
+25, 33 y 47. Indicar Id de cliente, Id de pedido, fecha de pedido, estado y monto
+total. Ordenar por Id de cliente.*/
+Select IdCliente, IdPedido, FechaPedido, Estado, MontoTotal from Pedidos
+WHERE IdCliente != 2 AND IdCliente != 9 AND IdCliente != 17 AND IdCliente != 25 AND IdCliente != 33 AND IdCliente != 47
+ORDER BY IdCliente ASC
 
-/**/
 
-/**/
+/*Listar todos los datos de los clientes cuyos apellidos comienzan con O, no
+poseen correo electrónico y su año de alta es 2017. Hacer la misma consulta
+para los clientes con apellido que comienza con P y año de alta 2019 que no
+poseen teléfono ni celular. Ordenar los registros por fecha de alta.*/
+Select * from Clientes
+WHERE (Apellido LIKE 'O%' AND CorreoElectronico IS NULL AND YEAR(FechaAlta) = 2017)
+OR (Apellido LIKE 'P%' AND YEAR(FechaAlta) = 2019 AND Telefono IS NULL AND Celular IS NULL)
+ORDER BY FechaAlta ASC
+
+/*Listar todos los datos del pedido que haya registrado el mayor monto total. En
+caso de empate se deben listar todos los pedidos con igual monto.*/
+Select * FROM Pedidos
+WHERE MontoTotal = (SELECT MAX(MontoTotal) from Pedidos)
