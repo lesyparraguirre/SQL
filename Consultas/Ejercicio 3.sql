@@ -134,4 +134,63 @@ INSERT INTO Ventas (IDCliente, IDLibro, Fecha, Puntaje, Importe) VALUES
 GO
 */
 
-SELECT * from Libros
+/*1-los títulos y las fechas de publicación de los libros publicados a partir del 1 de enero de 2000, 
+ordenados del más antiguo al más reciente*/
+Select Titulo, FechaPublicacion from Libros
+Where FechaPublicacion >= '01/01/2000'
+ORDER BY FechaPublicacion ASC
+
+/*2-nombres, apellidos y correos electrónicos de los clientes cuyo apellido comienza con la letra «M», ordenados alfabeticanmente por apellido */
+Select Nombre, Apellido, Mail from Clientes
+WHERE Apellido LIKE 'M%'
+ORDER BY Apellido ASC
+
+/*3-Títulos y fechas de publicación de los libros publicados entre el 1 de enero de 1990 y el 31 de diciembre de 2010 (inclusive), 
+ordenados del más reciente al más antiguo.*/
+SET DATEFORMAT DMY
+Select Titulo, FechaPublicacion from Libros
+WHERE FechaPublicacion >= '01/01/1990' AND FechaPublicacion <= '31/12/2010'
+ORDER BY FechaPublicacion DESC
+
+/*4-Nombre y apellido de los autores cuyo país sea Argentina o España, ordenados alfabéticamente por apellido. */
+Select Nombre, Apellido from Autores
+WHERE Pais = 'Argentina' or Pais = 'España'
+ORDER BY Apellido ASC
+
+/*5-Títulos de los libros publicados antes del año 2000, junto con el nombre y apellido de sus autores, ordenados alfabéticamente por título. */
+Select Libros.Titulo, Autores.Nombre, Autores.Apellido from Libros
+INNER JOIN Autores
+ON libros.IDAutor = Autores.ID
+WHERE YEAR(FechaPublicacion) < 2000
+ORDER BY Titulo ASC
+
+/*6-Nombre y apellido de los clientes que realizaron compras por un importe superior a $5.000, junto con el importe y 
+la fecha de cada venta, ordenados de mayor a menor importe. */
+Select Clientes.Nombre, Clientes.Apellido, Ventas.Importe, Ventas.Fecha FROM Clientes
+INNER JOIN Ventas
+ON Ventas.IDCliente = Clientes.ID
+WHERE Importe > 5000
+ORDER BY IMPORTE DESC
+
+/*7-Nombre y apellido de los clientes que realizaron compras durante el año 2024, junto con el título del libro 
+comprado y la fecha de venta, ordenados cronológicamente desde la compra más reciente hasta la más antigua*/
+Select Clientes.Nombre, Clientes.Apellido, Libros.Titulo, Ventas.Fecha From Clientes
+INNER JOIN Ventas
+ON Ventas.IDCliente = Clientes.ID
+INNER JOIN Libros
+ON Ventas.IDLibro = Libros.ID
+WHERE YEAR(Fecha) = 2024
+ORDER BY Fecha DESC
+/*8-Nombre y apellido de cada cliente, junto con la cantidad total de compras que realizó, incluyendo únicamente 
+a los clientes que hayan realizado al menos una compra, ordenados de mayor a menor cantidad de compras.*/
+Select Clientes.Apellido, Clientes.Nombre, COUNT(Ventas.ID) AS CantidadCompras from Clientes
+INNER JOIN Ventas
+ON Clientes.ID = Ventas.IDCliente
+GROUP BY Clientes.Apellido, Clientes.Nombre
+ORDER BY COUNT(Ventas.ID) DESC
+
+/* */
+
+/* */
+
+/* */
